@@ -85,7 +85,7 @@ server:
 From a Terminal window, run this command to package the Spring Boot application as a standalone JAR artifact.
 
 ```bash
-$ ./gradlew bootJar
+$ ./gradlew bootRun
 ```
 
 Then, run the application using the `java` CLI.
