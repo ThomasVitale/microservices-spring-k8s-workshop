@@ -1,0 +1,49 @@
+server:
+  port: 9000
+
+spring:
+  application:
+    name: edge-service
+  cloud:
+    gateway:
+      routes:
+        - id: book-route
+          uri: ${BOOK_SERVICE_URI:http://localhost:8080}
+          predicates:
+            - Path=/books/**
+          filters:
+            - AddResponseHeader=X-Genre,fantasy
+        - id: suggestion-route
+          uri: ${SUGGESTION_SERVICE_URI:http://localhost:8181}
+          predicates:
+            - Path=/suggestions/**
+          filters:
+            - AddRequestHeader=X-Tenant,acme
+      default-filters:
+        - name: Retry
+          args:
+            retries: 5
+            methods: GET
+            backoff:
+              firstBackoff: 50ms
+              maxBackoff: 500ms
+              factor: 2
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+      probes:
+        enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}

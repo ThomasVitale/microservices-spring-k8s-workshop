@@ -1,0 +1,28 @@
+server:
+  port: 8181
+
+spring:
+  application:
+    name: suggestion-service
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+      probes:
+        enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+demo:
+  book-service-uri: http://localhost:8080

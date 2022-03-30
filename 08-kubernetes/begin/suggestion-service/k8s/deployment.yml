@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: suggestion-service
+  labels:
+    app: suggestion-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: suggestion-service
+  template:
+    metadata:
+      labels:
+        app: suggestion-service
+      annotations:
+        prometheus.io/scrape : "true"
+        prometheus.io/path : /actuator/prometheus
+        prometheus.io/port : "8181"
+    spec:
+      containers:
+        - name: suggestion-service
+          image: suggestion-service
+          imagePullPolicy: IfNotPresent
+          lifecycle:
+            preStop:
+              exec:
+                command: [ "sh", "-c", "sleep 5" ]
+          ports:
+            - containerPort: 8181
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8181
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8181
+            initialDelaySeconds: 5
+            periodSeconds: 15
+          volumeMounts:
+            - name: suggestion-config-volume
+              mountPath: /workspace/config
+      volumes:
+        - name: suggestion-config-volume
+          configMap:
+            name: suggestion-config

@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: book-service
+  labels:
+    app: book-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: book-service
+  template:
+    metadata:
+      labels:
+        app: book-service
+      annotations:
+        prometheus.io/scrape : "true"
+        prometheus.io/path : /actuator/prometheus
+        prometheus.io/port : "8080"
+    spec:
+      containers:
+        - name: book-service
+          image: book-service
+          imagePullPolicy: IfNotPresent
+          lifecycle:
+            preStop:
+              exec:
+                command: [ "sh", "-c", "sleep 5" ]
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 15
+          resources:
+            requests:
+              memory: 756Mi
+              cpu: "0.1"
+            limits:
+              memory: 756Mi
+              cpu: "2"
+          volumeMounts:
+            - name: book-config-volume
+              mountPath: /workspace/config
+      volumes:
+        - name: book-config-volume
+          configMap:
+            name: book-config

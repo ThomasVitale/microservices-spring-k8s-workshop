@@ -1,1 +1,7 @@
-# microservices-spring-k8s-workshop
+# Microservices with Spring and Kubernetes (Workshop)
+
+Pre-requisites:
+
+* Java 17
+* Docker
+* minikube or kind
