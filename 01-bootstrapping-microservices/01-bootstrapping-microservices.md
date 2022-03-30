@@ -124,4 +124,4 @@ Finally, configure the server port with an environment variable.
 $ export SERVER_PORT=8383 && java -jar build/libs/book-service-0.0.1-SNAPSHOT.jar
 ```
 
-On the Spring Boot [documentation](https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config), you can find the list of property sources considered by he framework and their precedence.
+On the Spring Boot [documentation](https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config), you can find the list of property sources considered by the framework and their precedence.
